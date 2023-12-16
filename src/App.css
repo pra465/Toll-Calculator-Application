@@ -1,0 +1,15 @@
+.App{
+    /* background-color: rgb(61, 59, 59); */
+    padding: 20px;
+    margin: 0px;
+}
+#applicationHeading{
+    text-align: center;
+    font-size: 25px;
+    color: goldenrod;
+}
+.mainContainer{
+    display: flex;
+    justify-content: space-around;
+    margin: 20px;
+}
