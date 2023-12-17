@@ -8,7 +8,6 @@ const overpassDataSlice = createSlice({
   reducers: {
     searchLocation: (state, action) => {
       state.locationData = action.payload;
-      console.log('clicked');
     },
   },
 });
