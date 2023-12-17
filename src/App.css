@@ -11,5 +11,17 @@
     display: flex;
     justify-content: space-around;
     margin: 40px 20px;
+    flex-wrap: wrap;
     
+}
+
+@media (max-width: 768px){
+    .mainContainer{
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+    }
+    .App{
+        padding: 0px;
+    }
 }

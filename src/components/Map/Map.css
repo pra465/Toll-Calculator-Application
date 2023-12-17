@@ -2,3 +2,11 @@
     width: 700px;
     height: 75vh;
 }
+
+@media (max-width: 768px){
+    #mapContainer{
+        margin-top: 30px;
+        width: 350px;
+        height: 75vh;
+    }
+}

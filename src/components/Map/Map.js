@@ -33,17 +33,15 @@ const Map = () => {
   );
   const dispatch = useDispatch();
 
-  // const routePolyline1 = 'uigcDmeqmMNKsBuHwNcq@kC{IcA_AmJuDbBgHxGfB^w@R_B';
-
   const decodedCoordinates = polyline.decode(routePolyline);
 
-  const handleMarkerClick = async (e) => {
+  const handleMarkerClick = (e) => {
     dispatch(addDestinationCordinates([e.latlng.lat, e.latlng.lng]));
     osrmApi(userLatitude, userLongitude, e.latlng.lat, e.latlng.lng);
     tollGuguApi(routePolyline);
   };
 
-  // OSRM API TESTING
+  // OSRM API Data
 
   useEffect(() => {
     const overpassApi = async () => {
@@ -53,20 +51,13 @@ const Map = () => {
     );
     out center;`;
 
-      // replace USER_LATITUDE and USER_LONGITUDE in the query with actual data;
-
       const queryWithUserLocation = overpassQuery
         .replace('USER_LATITUDE', userLatitude)
         .replace('USER_LONGITUDE', userLongitude);
 
-      // encode the query
-
       const encodedQuery = encodeURIComponent(queryWithUserLocation);
 
-      // Construct the overpass API call using fetch
       const overpassUrl = `https://overpass-api.de/api/interpreter?data=${encodedQuery}`;
-
-      // Make the Overpass API call using fetch
 
       const response = await fetch(overpassUrl);
       const data = await response.json();
@@ -99,10 +90,10 @@ const Map = () => {
     return polyline;
   };
   // Toll Guru Api
+
   const tollGuguApi = (routePolyline) => {
-    const osrmPolyline = routePolyline; // Replace with your OSRM polyline
+    const osrmPolyline = routePolyline;
     const tollGuruApiKey = 'J8Tp4L6hB9gf7r8FdQD2tb4JQtPTfJbR';
-    console.log(osrmPolyline);
 
     const tollGuruUrl = `https://apis.tollguru.com/toll/v2/complete-polyline-from-mapping-service`;
     fetch(tollGuruUrl, {
@@ -117,9 +108,7 @@ const Map = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        // Handle TollGuru API response (contains TollGuru-compatible polyline)
         dispatch(addTollCost(data.route));
-        console.log(data);
       })
       .catch((error) => {
         console.error('Error fetching TollGuru-compatible polyline:', error);
