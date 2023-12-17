@@ -13,6 +13,7 @@ import {
 import { useDispatch } from 'react-redux';
 import { addDestinationCordinates } from '../../features/locationCordinatesSlice';
 import polyline from 'polyline';
+import { addTollCost } from '../../features/tollCostSlice';
 const redMarker = new L.Icon({
   iconUrl:
     'https://cdn0.iconfinder.com/data/icons/staff-management-4/60/map__location__pin__user__marker-1024.png',
@@ -30,9 +31,6 @@ const Map = () => {
   const searchbyTextValue = useSelector(
     (state) => state.overpassData.locationData
   );
-  // const destinationCordinates = useSelector(
-  //   (state) => state.cordinates.destinationCordinates
-  // );
   const dispatch = useDispatch();
 
   // const routePolyline1 = 'uigcDmeqmMNKsBuHwNcq@kC{IcA_AmJuDbBgHxGfB^w@R_B';
@@ -40,10 +38,9 @@ const Map = () => {
   const decodedCoordinates = polyline.decode(routePolyline);
 
   const handleMarkerClick = async (e) => {
-    console.log('clicked');
     dispatch(addDestinationCordinates([e.latlng.lat, e.latlng.lng]));
-    console.log(e.latlng.lat, e.latlng.lng);
     osrmApi(userLatitude, userLongitude, e.latlng.lat, e.latlng.lng);
+    tollGuguApi(routePolyline);
   };
 
   // OSRM API TESTING
@@ -87,12 +84,6 @@ const Map = () => {
     destinantionLatitude,
     destinationLongitude
   ) => {
-    console.log(
-      userLatitude,
-      userLongitude,
-      destinantionLatitude,
-      destinationLongitude
-    );
     const response = await fetch(
       `https://router.project-osrm.org/route/v1/car/${userLongitude},${userLatitude};${destinationLongitude},${destinantionLatitude}`
     );
@@ -102,13 +93,37 @@ const Map = () => {
     }
 
     const data = await response.json();
-    console.log(data);
     const polyline = data.routes[0].geometry;
-    // const decodedCordinates = polyline.decode(polyline);
     setRoutePolyline(polyline);
-    console.log(polyline);
 
     return polyline;
+  };
+  // Toll Guru Api
+  const tollGuguApi = (routePolyline) => {
+    const osrmPolyline = routePolyline; // Replace with your OSRM polyline
+    const tollGuruApiKey = 'J8Tp4L6hB9gf7r8FdQD2tb4JQtPTfJbR';
+    console.log(osrmPolyline);
+
+    const tollGuruUrl = `https://apis.tollguru.com/toll/v2/complete-polyline-from-mapping-service`;
+    fetch(tollGuruUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': tollGuruApiKey,
+      },
+      body: JSON.stringify({
+        polyline: osrmPolyline,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle TollGuru API response (contains TollGuru-compatible polyline)
+        dispatch(addTollCost(data.route));
+        console.log(data);
+      })
+      .catch((error) => {
+        console.error('Error fetching TollGuru-compatible polyline:', error);
+      });
   };
 
   if (userLatitude === null || userLongitude === null) {
@@ -135,9 +150,7 @@ const Map = () => {
                 position={destination}
                 eventHandlers={{ click: (e) => handleMarkerClick(e) }}
               >
-                <Popup>
-                  A sample Popup. <br /> Easily customizable.{' '}
-                </Popup>
+                <Popup>Your destination 🚗</Popup>
               </Marker>
             );
           })}

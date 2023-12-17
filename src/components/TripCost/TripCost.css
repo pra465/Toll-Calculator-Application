@@ -1,0 +1,13 @@
+#tripCostContainer{
+    background-color: #f1dca6;
+    padding: 1px 30px;
+    margin-top: 20px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.tripCostHeading{
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+}
