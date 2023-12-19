@@ -38,8 +38,10 @@ const Map = () => {
   const handleMarkerClick = (e) => {
     dispatch(addDestinationCordinates([e.latlng.lat, e.latlng.lng]));
     osrmApi(userLatitude, userLongitude, e.latlng.lat, e.latlng.lng);
-    tollGuguApi(routePolyline);
   };
+  useEffect(() => {
+    tollGuguApi(routePolyline);
+  }, [routePolyline]);
 
   // OSRM API Data
 
