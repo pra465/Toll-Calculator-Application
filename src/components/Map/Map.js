@@ -111,6 +111,9 @@ const Map = () => {
       .then((response) => response.json())
       .then((data) => {
         dispatch(addTollCost(data.route));
+        if (data.status === 403) {
+          alert('TollGuru ' + data.message);
+        }
       })
       .catch((error) => {
         console.error('Error fetching TollGuru-compatible polyline:', error);
